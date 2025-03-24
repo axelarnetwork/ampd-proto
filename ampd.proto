@@ -1,0 +1,181 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+package ampd;
+
+enum Algorithm {
+  ECDSA = 0;
+  ED25519 = 1;
+}
+
+message KeyId {
+  string id = 1;
+  Algorithm algorithm = 2;
+}
+
+message EventBlockBegin { uint64 height = 1; }
+
+message EventBlockEnd { uint64 height = 1; }
+
+message Event {
+  string type = 1;
+  string contract = 2; // empty when the event is not emitted by a contract
+  map<string, string> attributes = 3;
+}
+
+message SubscribeRequest {
+  // the subscription returns all events that match ANY of these filters
+  repeated Event filters = 1;
+  bool include_block_begin_end = 2;
+}
+
+message SubscribeResponse {
+  oneof event {
+    EventBlockBegin block_begin = 1;
+    EventBlockEnd block_end = 2;
+    Event abci = 3;
+  }
+}
+
+message BroadcastRequest { google.protobuf.Any msg = 1; }
+
+message BroadcastResponse {
+  bytes tx_hash = 1;
+  uint64 index = 2;
+}
+
+message QueryRequest {
+  string contract = 1;
+  string query = 2;
+}
+
+message QueryResponse { string result = 1; }
+
+message AddressRequest {}
+
+message AddressResponse { string address = 1; }
+
+message ContractsRequest {}
+
+message ContractsResponse {
+  string voting_verifier = 1;
+  string multisig_prover = 2;
+  string service_registry = 3;
+  string rewards = 4;
+}
+
+message SignRequest {
+  KeyId key_id = 1;
+  bytes msg = 2;
+}
+
+message SignResponse { bytes signature = 1; }
+
+message KeyRequest { KeyId key_id = 1; }
+
+message KeyResponse { bytes pub_key = 1; }
+
+service Blockchain {
+  /**
+   * Subscribe streams events from the blockchain, starting from the current
+   * height.
+   *
+   * The client can specify filters to receive only events that match the
+   * filters. The client can also specify to include block begin and end events.
+   *
+   * @param SubscribeRequest Contains event filters and subscription options
+   * @returns Stream of SubscribeResponse containing matching events
+   *
+   * Error Codes:
+   * - Status DeadlineExceeded: No block received within the configured timeout
+   * - Status DataLoss: Client cannot keep up with the event stream
+   * - Status Unavailable: Network-related issues when connecting to the
+   * blockchain node
+   * - Status Internal: The received event cannot be decoded
+   */
+  rpc Subscribe(SubscribeRequest) returns (stream SubscribeResponse) {}
+
+  /**
+   * Broadcast sends a message to the blockchain and returns the transaction
+   * hash and the index of the message in the transaction once it is
+   * broadcasted.
+   *
+   * The message is potentially batched with other messages in the same
+   * transaction.
+   *
+   * @param BroadcastRequest Contains the message to broadcast
+   * @returns BroadcastResponse with the transaction hash and message index
+   *
+   * Error Codes:
+   * - Status InvalidArgument: Message is invalid (fee estimation failure not
+   * due to network issues)
+   * - Status Unavailable: Network-related issues when connecting to the
+   * blockchain node
+   */
+  rpc Broadcast(BroadcastRequest) returns (BroadcastResponse) {}
+
+  /**
+   * Query sends a query to a contract and returns the raw result in JSON
+   * encoding.
+   *
+   * @param QueryRequest Contains the contract address and query in JSON format
+   * @returns QueryResponse with the query result in JSON format
+   *
+   * Error Codes:
+   * - Status InvalidArgument: Query is invalid JSON
+   * - Status Unknown: Contract returns an error
+   * - Status Unavailable: Network-related issues when connecting to the
+   * blockchain node
+   */
+  rpc Query(QueryRequest) returns (QueryResponse) {}
+
+  /**
+   * Address returns the axelar address that ampd broadcasts transactions
+   * from.
+   *
+   * @param AddressRequest
+   * @returns AddressResponse with the address
+   *
+   * Error Codes:
+   * - Status Internal: Address retrieval fails for any reason
+   */
+  rpc Address(AddressRequest) returns (AddressResponse) {}
+
+  /**
+   * Contracts returns the addresses of the amplifier contracts that event
+   * handlers need to interact with.
+   *
+   * @param ContractsRequest
+   * @returns ContractsResponse with the contract addresses
+   *
+   * Error Codes:
+   * - Status Internal: Contract address retrieval fails for any reason
+   */
+  rpc Contracts(ContractsRequest) returns (ContractsResponse) {}
+}
+
+service Crypto {
+  /**
+   * Sign signs the keccak256 hash of the given message with the specified key
+   * ID.
+   *
+   * @param SignRequest Contains the key ID and the message to sign
+   * @returns SignResponse with the signature
+   *
+   * Error Codes:
+   * - Status Internal: Signing fails for any reason
+   */
+  rpc Sign(SignRequest) returns (SignResponse) {}
+
+  /**
+   * Key returns the public key of the specified key ID.
+   *
+   * @param KeyRequest Contains the key ID
+   * @returns KeyResponse with the public key
+   *
+   * Error Codes:
+   * - Status Internal: Key retrieval fails for any reason
+   */
+  rpc Key(KeyRequest) returns (KeyResponse) {}
+}
