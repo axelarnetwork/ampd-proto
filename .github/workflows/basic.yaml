@@ -44,12 +44,18 @@ jobs:
         uses: arduino/setup-protoc@v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Install Rust protobuf plugin
+        run: |
+          cargo install protoc-gen-prost
 
       - name: Generate Rust code
         run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          which protoc-gen-prost || exit 1
+
           protoc --rs_out . *.proto
           
-          if [ $? -ne 0 ]; then
-            echo "Failed to generate Rust code from proto files"
-            exit 1
-          fi
+          for proto in $(find . -name '*.proto'); do
+            protoc --prost_out=. --proto_path=. "$proto"
+          done
