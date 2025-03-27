@@ -53,8 +53,6 @@ jobs:
         run: |
           export PATH="$HOME/.cargo/bin:$PATH"
           which protoc-gen-prost || exit 1
-
-          protoc --rs_out . *.proto
           
           for proto in $(find . -name '*.proto'); do
             protoc --prost_out=. --proto_path=. "$proto"
