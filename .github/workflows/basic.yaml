@@ -17,20 +17,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Install golangci-lint
-        run: make prereqs
-      
-      - name: Proto lint
-        run: make proto-lint
 
-      # - name: Setup Buf
-      #   uses: bufbuild/buf-setup-action@v1.50.0
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v3
 
-      # - name: Lint Protobuf
-      #   uses: bufbuild/buf-lint-action@v1
+      - name: Lint Protobuf
+        run: docker run --rm -v $(pwd):/workspace --workdir /workspace bufbuild/buf lint
 
   proto-compile-check:
     name: Verify Proto Compilation
