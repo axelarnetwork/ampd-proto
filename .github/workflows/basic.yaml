@@ -21,8 +21,11 @@ jobs:
       - name: Setup Docker
         uses: docker/setup-buildx-action@v3
 
-      - name: Lint Protobuf
-        run: docker run --rm -v $(pwd):/workspace --workdir /workspace bufbuild/buf lint
+      - name: Format Proto Files
+        run: make proto-format
+        
+      - name: Lint Proto Files
+        run: make proto-lint
 
   proto-compile-check:
     name: Verify Proto Compilation
