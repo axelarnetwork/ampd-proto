@@ -18,14 +18,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1.50.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Format Proto Files
-        run: make proto-format
-        
-      - name: Lint Proto Files
-        run: make proto-lint
+      - name: Lint Protobuf
+        uses: bufbuild/buf-lint-action@v1
 
   proto-compile-check:
     name: Verify Proto Compilation
