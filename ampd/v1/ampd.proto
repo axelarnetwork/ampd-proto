@@ -2,11 +2,12 @@ syntax = "proto3";
 
 import "google/protobuf/any.proto";
 
-package ampd;
+package ampd.v1;
 
 enum Algorithm {
-  ECDSA = 0;
-  ED25519 = 1;
+  ALGORITHM_UNSPECIFIED = 0; 
+  ALGORITHM_ECDSA = 1;
+  ALGORITHM_ED25519 = 2;
 }
 
 message KeyId {
@@ -76,7 +77,7 @@ message KeyRequest { KeyId key_id = 1; }
 
 message KeyResponse { bytes pub_key = 1; }
 
-service Blockchain {
+service BlockchainService {
   /**
    * Subscribe streams events from the blockchain, starting from the current
    * height.
@@ -155,7 +156,7 @@ service Blockchain {
   rpc Contracts(ContractsRequest) returns (ContractsResponse) {}
 }
 
-service Crypto {
+service CryptoService {
   /**
    * Sign signs the keccak256 hash of the given message with the specified key
    * ID.
