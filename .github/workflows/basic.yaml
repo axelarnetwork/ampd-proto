@@ -1,0 +1,59 @@
+name: Basic
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-proto:
+    name: Lint Proto Files
+    runs-on: blacksmith-16vcpu-ubuntu-2204
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1.50.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lint Protobuf
+        uses: bufbuild/buf-lint-action@v1
+
+  proto-compile-check:
+    name: Verify Proto Compilation
+    runs-on: blacksmith-32vcpu-ubuntu-2204
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.81.0
+          override: true
+
+      - name: Install protoc
+        uses: arduino/setup-protoc@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Install Rust protobuf plugin
+        run: |
+          cargo install protoc-gen-prost
+
+      - name: Generate Rust code
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          which protoc-gen-prost || exit 1
+          
+          for proto in $(find . -name '*.proto'); do
+            protoc --prost_out=. --proto_path=. "$proto"
+          done
