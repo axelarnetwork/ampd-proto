@@ -92,7 +92,7 @@ service BlockchainService {
    * - Status DeadlineExceeded: No block received within the configured timeout
    * - Status DataLoss: Client cannot keep up with the event stream
    * - Status Unavailable: Network-related issues when connecting to the
-   * blockchain node
+   *   blockchain node
    * - Status Internal: The received event cannot be decoded
    */
   rpc Subscribe(SubscribeRequest) returns (stream SubscribeResponse) {}
@@ -110,9 +110,9 @@ service BlockchainService {
    *
    * Error Codes:
    * - Status InvalidArgument: Message is invalid (fee estimation failure not
-   * due to network issues)
+   *   due to network issues)
    * - Status Unavailable: Network-related issues when connecting to the
-   * blockchain node
+   *   blockchain node
    */
   rpc Broadcast(BroadcastRequest) returns (BroadcastResponse) {}
 
@@ -127,7 +127,7 @@ service BlockchainService {
    * - Status InvalidArgument: Query is invalid JSON
    * - Status Unknown: Contract returns an error
    * - Status Unavailable: Network-related issues when connecting to the
-   * blockchain node
+   *   blockchain node
    */
   rpc Query(QueryRequest) returns (QueryResponse) {}
 
