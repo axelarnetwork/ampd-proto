@@ -25,9 +25,15 @@ message Event {
   map<string, string> attributes = 3;
 }
 
+// EventFilter is used to filter events emitted by the blockchain.
+// The filters are ORed together, meaning that if any of the filters match,
+// the event will be emitted.
+// Note: It is invalid to have both the type and contract empty
 message EventFilter {
-  string type = 1; // if empty, events with any type will be emitted
-  string contract = 2; // if empty, events from any contract or cosmos modules will be emitted
+  // if empty, events with any type will be emitted
+  string type = 1;
+  // if empty, events from any contract or cosmos modules will be emitted
+  string contract = 2;
 }
 
 message SubscribeRequest {
@@ -47,7 +53,7 @@ message SubscribeResponse {
 message BroadcastRequest { google.protobuf.Any msg = 1; }
 
 message BroadcastResponse {
-  bytes tx_hash = 1;
+  string tx_hash = 1;
   uint64 index = 2;
 }
 
@@ -94,8 +100,8 @@ service BlockchainService {
    * @returns Stream of SubscribeResponse containing matching events
    *
    * Error Codes:
-   * - Status InvalidArgument: Any of the contract address provided in the
-   *   filters is invalid
+   * - Status InvalidArgument: Any of the filters provided is invalid
+   *   (empty filter, invalid contract address, etc.)
    * - Status DataLoss: Client cannot keep up with the event stream
    * - Status Unavailable: Network-related issues when connecting to the
    *   blockchain node
@@ -115,10 +121,13 @@ service BlockchainService {
    * @returns BroadcastResponse with the transaction hash and message index
    *
    * Error Codes:
-   * - Status InvalidArgument: Message is invalid (fee estimation failure not
-   *   due to network issues)
+   * - Status InvalidArgument: Message is empty
+   * - Status InvalidArgument: Gas esimate fails or gas exceeds the limit
    * - Status Unavailable: Network-related issues when connecting to the
    *   blockchain node
+   * - Status Unavailable: Network-related issues when connecting to the
+   *   signing service
+   * - Status Internal: Any other error that occurs while processing the request
    */
   rpc Broadcast(BroadcastRequest) returns (BroadcastResponse) {}
 
