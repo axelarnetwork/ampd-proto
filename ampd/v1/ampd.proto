@@ -57,12 +57,12 @@ message BroadcastResponse {
   uint64 index = 2;
 }
 
-message QueryRequest {
+message SmartContractStateRequest {
   string contract = 1;
-  string query = 2;
+  bytes query = 2;
 }
 
-message QueryResponse { string result = 1; }
+message SmartContractStateResponse { bytes result = 1; }
 
 message AddressRequest {}
 
@@ -132,19 +132,19 @@ service BlockchainService {
   rpc Broadcast(BroadcastRequest) returns (BroadcastResponse) {}
 
   /**
-   * Query sends a query to a contract and returns the raw result in JSON
+   * SmartContractState sends a query to a contract and returns the raw result in JSON
    * encoding.
    *
-   * @param QueryRequest Contains the contract address and query in JSON format
-   * @returns QueryResponse with the query result in JSON format
+   * @param SmartContractStateRequest Contains the contract address and query in JSON format
+   * @returns SmartContractStateResponse with the query result in JSON format
    *
    * Error Codes:
-   * - Status InvalidArgument: Query is invalid JSON
-   * - Status Unknown: Contract returns an error
+   * - Status InvalidArgument: Contract is invalid or query is invalid JSON
+   * - Status Unknown: Contract query returns an error
    * - Status Unavailable: Network-related issues when connecting to the
    *   blockchain node
    */
-  rpc Query(QueryRequest) returns (QueryResponse) {}
+  rpc SmartContractState(SmartContractStateRequest) returns (SmartContractStateResponse) {}
 
   /**
    * Address returns the axelar address that ampd broadcasts transactions
