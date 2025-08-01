@@ -110,28 +110,6 @@ service BlockchainService {
   rpc Subscribe(SubscribeRequest) returns (stream SubscribeResponse) {}
 
   /**
-   * Broadcast sends a message to the blockchain and returns the transaction
-   * hash and the index of the message in the transaction once it is
-   * broadcasted.
-   *
-   * The message is potentially batched with other messages in the same
-   * transaction.
-   *
-   * @param BroadcastRequest Contains the message to broadcast
-   * @returns BroadcastResponse with the transaction hash and message index
-   *
-   * Error Codes:
-   * - Status InvalidArgument: Message is empty
-   * - Status InvalidArgument: Gas esimate fails or gas exceeds the limit
-   * - Status Unavailable: Network-related issues when connecting to the
-   *   blockchain node
-   * - Status Unavailable: Network-related issues when connecting to the
-   *   signing service
-   * - Status Internal: Any other error that occurs while processing the request
-   */
-  rpc Broadcast(BroadcastRequest) returns (BroadcastResponse) {}
-
-  /**
    * ContractState sends a query to a contract and returns the raw result in JSON
    * encoding.
    *
@@ -147,18 +125,6 @@ service BlockchainService {
   rpc ContractState(ContractStateRequest) returns (ContractStateResponse) {}
 
   /**
-   * Address returns the axelar address that ampd broadcasts transactions
-   * from.
-   *
-   * @param AddressRequest
-   * @returns AddressResponse with the address
-   *
-   * Error Codes:
-   * - Status Internal: Address retrieval fails for any reason
-   */
-  rpc Address(AddressRequest) returns (AddressResponse) {}
-
-  /**
    * Contracts returns the addresses of the amplifier contracts that event
    * handlers need to interact with.
    *
@@ -169,6 +135,42 @@ service BlockchainService {
    * - Status Internal: Contract address retrieval fails for any reason
    */
   rpc Contracts(ContractsRequest) returns (ContractsResponse) {}
+}
+
+service BroadcastService {
+  /**
+   * Broadcast sends a message to the blockchain and returns the transaction
+   * hash and the index of the message in the transaction once it is
+   * broadcasted.
+   *
+   * The message is potentially batched with other messages in the same
+   * transaction.
+   *
+   * @param BroadcastRequest Contains the message to broadcast
+   * @returns BroadcastResponse with the transaction hash and message index
+   *
+   * Error Codes:
+   * - Status InvalidArgument: Message is empty
+   * - Status InvalidArgument: Gas estimate fails or gas exceeds the limit
+   * - Status Unavailable: Network-related issues when connecting to the
+   *   blockchain node
+   * - Status Unavailable: Network-related issues when connecting to the
+   *   signing service
+   * - Status Internal: Any other error that occurs while processing the request
+   */
+  rpc Broadcast(BroadcastRequest) returns (BroadcastResponse) {}
+
+  /**
+ * Address returns the axelar address that ampd broadcasts transactions
+ * from.
+ *
+ * @param AddressRequest
+ * @returns AddressResponse with the address
+ *
+ * Error Codes:
+ * - Status Internal: Address retrieval fails for any reason
+ */
+  rpc Address(AddressRequest) returns (AddressResponse) {}
 }
 
 service CryptoService {
