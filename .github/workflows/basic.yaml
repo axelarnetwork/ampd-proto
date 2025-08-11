@@ -16,32 +16,32 @@ jobs:
     runs-on: blacksmith-16vcpu-ubuntu-2204
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Setup Buf
-        uses: bufbuild/buf-setup-action@v1.50.0
+        uses: bufbuild/buf-setup-action@a47c93e0b1648d5651a065437926377d060baa99 # v1.50.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint Protobuf
-        uses: bufbuild/buf-lint-action@v1
+        uses: bufbuild/buf-lint-action@06f9dd823d873146471cfaaf108a993fe00e5325 # v1
 
   proto-compile-check:
     name: Verify Proto Compilation
     runs-on: blacksmith-32vcpu-ubuntu-2204
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # v1
         with:
           profile: minimal
           toolchain: 1.81.0
           override: true
 
       - name: Install protoc
-        uses: arduino/setup-protoc@v2
+        uses: arduino/setup-protoc@a8b67ba40b37d35169e222f3bb352603327985b6 # v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       
