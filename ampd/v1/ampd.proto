@@ -68,13 +68,16 @@ message AddressRequest {}
 
 message AddressResponse { string address = 1; }
 
-message ContractsRequest {}
+message ContractsRequest {
+  string chain = 1;
+}
 
 message ContractsResponse {
   string voting_verifier = 1;
   string multisig_prover = 2;
   string service_registry = 3;
   string rewards = 4;
+  string multisig = 5;
 }
 
 message SignRequest {
