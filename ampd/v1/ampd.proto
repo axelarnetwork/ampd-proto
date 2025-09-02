@@ -125,7 +125,7 @@ service BlockchainService {
    *
    * Error Codes:
    * - Status InvalidArgument: Message is empty
-   * - Status InvalidArgument: Gas esimate fails or gas exceeds the limit
+   * - Status InvalidArgument: Gas estimate fails or gas exceeds the limit
    * - Status Unavailable: Network-related issues when connecting to the
    *   blockchain node
    * - Status Unavailable: Network-related issues when connecting to the
