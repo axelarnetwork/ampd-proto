@@ -125,7 +125,7 @@ service BlockchainService {
    *
    * Error Codes:
    * - Status InvalidArgument: Message is empty
-   * - Status InvalidArgument: Gas esimate fails or gas exceeds the limit
+   * - Status InvalidArgument: Gas estimate fails or gas exceeds the limit
    * - Status Unavailable: Network-related issues when connecting to the
    *   blockchain node
    * - Status Unavailable: Network-related issues when connecting to the
@@ -142,10 +142,11 @@ service BlockchainService {
    * @returns ContractStateResponse with the query result in JSON format
    *
    * Error Codes:
-   * - Status InvalidArgument: Contract is invalid or query is invalid JSON
+   * - Status InvalidArgument: Contract is invalid or query is invalid
    * - Status Unknown: Contract query returns an error
    * - Status Unavailable: Network-related issues when connecting to the
    *   blockchain node
+   * - Status Internal: Server encountered an error processing the request
    */
   rpc ContractState(ContractStateRequest) returns (ContractStateResponse) {}
 
@@ -169,6 +170,7 @@ service BlockchainService {
    * @returns ContractsResponse with the contract addresses
    *
    * Error Codes:
+   * - Status NotFound: Chain contracts not found for the specified chain
    * - Status Internal: Contract address retrieval fails for any reason
    */
   rpc Contracts(ContractsRequest) returns (ContractsResponse) {}
