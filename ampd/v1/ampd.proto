@@ -68,6 +68,10 @@ message AddressRequest {}
 
 message AddressResponse { string address = 1; }
 
+message LatestBlockHeightRequest {}
+
+message LatestBlockHeightResponse { uint64 height = 1; }
+
 message ContractsRequest {
   string chain = 1;
 }
@@ -174,6 +178,17 @@ service BlockchainService {
    * - Status Internal: Contract address retrieval fails for any reason
    */
   rpc Contracts(ContractsRequest) returns (ContractsResponse) {}
+
+  /**
+   * LatestBlockHeight returns the latest block height of the blockchain.
+   *
+   * @param LatestBlockHeightRequest
+   * @returns LatestBlockHeightResponse with the latest block height
+   *
+   * Error Codes:
+   * - Status Internal: Block height retrieval fails for any reason
+   */
+  rpc LatestBlockHeight(LatestBlockHeightRequest) returns (LatestBlockHeightResponse) {}
 }
 
 service CryptoService {
