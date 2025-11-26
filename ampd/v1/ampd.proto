@@ -28,12 +28,14 @@ message Event {
 // EventFilter is used to filter events emitted by the blockchain.
 // The filters are ORed together, meaning that if any of the filters match,
 // the event will be emitted.
-// Note: It is invalid to have both the type and contract empty
+// Note: It is invalid to have all fields empty
 message EventFilter {
   // if empty, events with any type will be emitted
   string type = 1;
   // if empty, events from any contract or cosmos modules will be emitted
   string contract = 2;
+  // if empty, events with any attributes will be emitted
+  map<string, string> attributes = 3;
 }
 
 message SubscribeRequest {

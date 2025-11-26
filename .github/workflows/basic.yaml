@@ -37,23 +37,23 @@ jobs:
         uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # v1
         with:
           profile: minimal
-          toolchain: 1.81.0
+          toolchain: 1.86.0
           override: true
 
       - name: Install protoc
         uses: arduino/setup-protoc@a8b67ba40b37d35169e222f3bb352603327985b6 # v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Install Rust protobuf plugin
         run: |
-          cargo install protoc-gen-prost
+          cargo install protoc-gen-prost --locked
 
       - name: Generate Rust code
         run: |
           export PATH="$HOME/.cargo/bin:$PATH"
           which protoc-gen-prost || exit 1
-          
+
           for proto in $(find . -name '*.proto'); do
             protoc --prost_out=. --proto_path=. "$proto"
           done
