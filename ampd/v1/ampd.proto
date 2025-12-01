@@ -84,6 +84,7 @@ message ContractsResponse {
   string service_registry = 3;
   string rewards = 4;
   string multisig = 5;
+  optional string event_verifier = 6;
 }
 
 message SignRequest {
